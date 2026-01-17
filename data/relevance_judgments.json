@@ -1,0 +1,79 @@
+{
+    "queries": {
+        "q1": "नेपालको राजनीति र सरकार",
+        "q2": "फुटबल र क्रिकेट खेल",
+        "q3": "कम्प्युटर प्रविधि",
+        "q4": "हिमाल आरोहण पर्यटन",
+        "q5": "नेपाली संस्कृति र चाडपर्व"
+    },
+    "assessments": {
+        "q1": {
+            "doc011_politics": 3,
+            "doc012_politics": 3,
+            "doc013_politics": 3,
+            "doc014_politics": 3,
+            "doc015_politics": 3,
+            "doc016_politics": 3,
+            "doc017_politics": 3,
+            "doc018_politics": 3,
+            "doc019_politics": 3,
+            "doc020_politics": 3,
+            "doc025_sports": 1,
+            "doc045_travel": 1,
+            "doc055_culture": 1
+        },
+        "q2": {
+            "doc021_sports": 3,
+            "doc022_sports": 3,
+            "doc023_sports": 3,
+            "doc024_sports": 3,
+            "doc025_sports": 3,
+            "doc026_sports": 3,
+            "doc027_sports": 3,
+            "doc028_sports": 3,
+            "doc029_sports": 3,
+            "doc030_sports": 3,
+            "doc09": 1,
+            "doc10": 1
+        },
+        "q3": {
+            "doc031_technology": 3,
+            "doc032_technology": 3,
+            "doc033_technology": 3,
+            "doc034_technology": 3,
+            "doc035_technology": 3,
+            "doc036_technology": 3,
+            "doc037_technology": 3,
+            "doc038_technology": 3,
+            "doc039_technology": 3,
+            "doc040_technology": 3,
+            "doc048_travel": 1
+        },
+        "q4": {
+            "doc017_politics": 1,
+            "doc025_sports": 1,
+            "doc041_travel": 3,
+            "doc042_travel": 3,
+            "doc043_travel": 3,
+            "doc044_travel": 3,
+            "doc045_travel": 3,
+            "doc046_travel": 3,
+            "doc047_travel": 3,
+            "doc048_travel": 3,
+            "doc049_travel": 3,
+            "doc050_travel": 3
+        },
+        "q5": {
+            "doc051_culture": 3,
+            "doc052_culture": 3,
+            "doc053_culture": 3,
+            "doc054_culture": 3,
+            "doc055_culture": 3,
+            "doc056_culture": 3,
+            "doc057_culture": 3,
+            "doc058_culture": 3,
+            "doc059_culture": 3,
+            "doc060_culture": 3
+        }
+    }
+}
