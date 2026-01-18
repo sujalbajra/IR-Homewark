@@ -1,0 +1,173 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Tokenization - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">🔤 Tokenization Information</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Tokenization breaks text into smaller units (tokens). It's the first step
+                            in NLP.</p>
+                        <div class="row gap-20">
+                            <div class="col-md-3">
+                                <div class="bgc-blue-50 p-15 bdrs-4">
+                                    <h6 class="c-blue-700">Sentence</h6>
+                                    <small>Splits on । ? !</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bgc-green-50 p-15 bdrs-4">
+                                    <h6 class="c-green-700">Word</h6>
+                                    <small>Splits on space</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bgc-orange-50 p-15 bdrs-4">
+                                    <h6 class="c-orange-700">Character</h6>
+                                    <small>Individual chars</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bgc-purple-50 p-15 bdrs-4">
+                                    <h6 class="c-purple-700">N-grams</h6>
+                                    <small>Sliding windows</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tokenizer Section -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <div class="peers ai-c jc-sb gap-20 mB-20">
+                        <div class="peer">
+                            <h4 class="c-grey-900 mB-0">✂️ Tokenizer</h4>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Nepali Text</label>
+                            <textarea name="text" class="form-control" rows="4" placeholder="Enter text here..."
+                                required>{{ text if text else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Level</label>
+                            <select name="level" class="form-control">
+                                <option value="all" {% if level=='all' %}selected{% endif %}>All Levels</option>
+                                <option value="sentence" {% if level=='sentence' %}selected{% endif %}>Sentence Only
+                                </option>
+                                <option value="word" {% if level=='word' %}selected{% endif %}>Word Only</option>
+                                <option value="ngram" {% if level=='ngram' %}selected{% endif %}>N-grams Only</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Tokenize Text</button>
+                    </form>
+                </div>
+            </div>
+
+            {% if results %}
+            <div class="col-md-12">
+                <div class="row gap-20">
+                    <!-- Sentences -->
+                    {% if results.sentences %}
+                    <div class="col-md-6">
+                        <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                            <h5 class="c-grey-900 mB-20">Sentences ({{ results.sentences|length }})</h5>
+                            <ol class="ps-3 mb-0">
+                                {% for sent in results.sentences %}
+                                <li class="mB-5">{{ sent }}</li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Words -->
+                    {% if results.words %}
+                    <div class="col-md-6">
+                        <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                            <h5 class="c-grey-900 mB-20">Words ({{ results.words|length }})</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for word in results.words %}
+                                <span class="badge bgc-blue-50 c-blue-700 p-10 fsz-sm">{{ word }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- N-grams -->
+                    {% if results.bigrams %}
+                    <div class="col-md-12">
+                        <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                            <h5 class="c-grey-900 mB-20">N-grams</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="c-grey-700">Bigrams</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for bg in results.bigrams[:20] %}
+                                        <span class="badge bgc-orange-50 c-orange-700 p-5">{{ bg|join(' + ') }}</span>
+                                        {% endfor %}
+                                        {% if results.bigrams|length > 20 %}
+                                        <span class="text-muted small align-self-center">+{{ results.bigrams|length - 20
+                                            }} more</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="c-grey-700">Trigrams</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for tg in results.trigrams[:15] %}
+                                        <span class="badge bgc-purple-50 c-purple-700 p-5">{{ tg|join(' + ') }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Stats -->
+                    {% if results.stats %}
+                    <div class="col-md-12">
+                        <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                            <h5 class="c-grey-900 mB-20">Statistics</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered mB-0">
+                                    <tr>
+                                        <th>Total Sentences</th>
+                                        <td>{{ results.stats.sentences }}</td>
+                                        <th>Total Words</th>
+                                        <td>{{ results.stats.words }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Unique Words</th>
+                                        <td>{{ results.stats.unique_words }}</td>
+                                        <th>Avg Word Length</th>
+                                        <td>{{ "%.2f"|format(results.stats.avg_word_length) }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

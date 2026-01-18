@@ -1,0 +1,102 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Train Word2Vec Model{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Word2Vec Training Configuration</h5>
+            </div>
+            <div class="card-body">
+                <form id="trainForm">
+                    <div class="form-group">
+                        <label>Embedding Dimension</label>
+                        <input type="number" class="form-control" name="embedding_dim" value="100">
+                        <small class="form-text text-muted">Size of vector representation (e.g. 50, 100, 300)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Context Window Size</label>
+                        <input type="number" class="form-control" name="window" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Training Epochs</label>
+                        <input type="number" class="form-control" name="epochs" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Vocabulary Size</label>
+                        <input type="number" class="form-control" name="vocab_size" value="5000">
+                        <small class="form-text text-muted">Top N frequent words to include</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block" id="trainBtn">
+                        <i class="fas fa-cogs"></i> Start Training
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Training Status</h5>
+            </div>
+            <div class="card-body">
+                <div id="statusArea" class="text-center py-5 text-muted">
+                    <i class="fas fa-robot fa-3x mb-3"></i>
+                    <p>Ready to train model on your documents</p>
+                </div>
+                <div id="resultsArea" style="display:none;">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> Training Completed!
+                    </div>
+                    <h6>Loss History:</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-info" id="lossBar" style="width: 100%"></div>
+                    </div>
+                    <p class="small text-muted">Final Loss: <span id="finalLoss"></span></p>
+
+                    <hr>
+                    <a href="{{ url_for('nlp.synonyms_finder') }}" class="btn btn-outline-primary btn-block">
+                        Test in Synonym Finder
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('trainForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const btn = document.getElementById('trainBtn');
+        const status = document.getElementById('statusArea');
+        const results = document.getElementById('resultsArea');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Training...';
+
+        status.innerHTML = '<div class="spinner-border text-primary" role="status"></div><p class="mt-2">Training Skip-gram Model...</p><small>This may take a minute based on corpus size</small>';
+        results.style.display = 'none';
+
+        const formData = new FormData(this);
+
+        fetch("{{ url_for('ml.train_word2vec') }}", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                status.style.display = 'none';
+                results.style.display = 'block';
+
+                const finalLoss = data.history[data.history.length - 1];
+                document.getElementById('finalLoss').innerText = finalLoss.toFixed(4);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-cogs"></i> Start Training';
+            });
+    });
+</script>
+{% endblock %}

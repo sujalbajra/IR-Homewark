@@ -1,0 +1,465 @@
+/* Custom Adminator-like Layout Implementation */
+/* Since we cannot compile the SCSS, we implement the core layout manually */
+
+/* =========================================================================
+   CORE LAYOUT
+   ========================================================================= */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--c-bkg-body);
+    color: var(--c-text-base);
+    overflow-x: hidden;
+}
+
+.app {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* =========================================================================
+   SIDEBAR
+   ========================================================================= */
+/* =========================================================================
+   SIDEBAR
+   ========================================================================= */
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    background-color: var(--c-bkg-sidebar);
+    color: #333;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    /* Fixed on Desktop too for stability */
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    /* Inner container handles scroll */
+}
+
+/* Mobile: Hidden by default */
+@media (max-width: 991px) {
+    .sidebar {
+        left: -280px;
+    }
+
+    .sidebar.is-active {
+        left: 0;
+    }
+}
+
+.sidebar-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /* Independent scroll */
+}
+
+/* Adjust page container to respect fixed sidebar */
+.page-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    padding-left: 280px;
+    /* Space for fixed sidebar */
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 991px) {
+    .page-container {
+        padding-left: 0;
+        /* No padding on mobile */
+    }
+}
+
+/* Dropdown Menu */
+/* Dropdown Menu - Accordion Style */
+.sidebar-menu .dropdown-menu {
+    display: none;
+    list-style: none !important;
+    padding: 5px 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    position: static !important;
+    float: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    margin: 0;
+}
+
+.sidebar-menu .nav-item.open>.dropdown-menu {
+    display: block !important;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Sidebar Link Styling */
+.sidebar-menu .sidebar-link,
+.sidebar-menu .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-menu .sidebar-link:hover,
+.sidebar-menu .dropdown-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    color: var(--c-primary);
+}
+
+/* Arrow Styling */
+.sidebar-menu .arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+    font-size: 0.8em;
+    color: #999;
+}
+
+.sidebar-menu .nav-item.open>.dropdown-toggle .arrow {
+    transform: rotate(90deg);
+    color: var(--c-primary);
+}
+
+/* Sub-menu Links */
+.sidebar-menu .dropdown-menu .sidebar-link {
+    padding-left: 55px;
+    /* Indent sub-items */
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.sidebar-menu .dropdown-menu .sidebar-link:hover {
+    color: var(--c-primary);
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.sidebar-menu .dropdown-menu .sidebar-link.active {
+    color: var(--c-primary);
+    font-weight: 500;
+    background-color: rgba(33, 150, 243, 0.1);
+    border-left-color: transparent;
+    /* Remove main border for sub-items or keep it? Let's keep it clean */
+}
+
+/* Header */
+.header {
+    height: 65px;
+    min-height: 65px;
+    background-color: var(--c-bkg-card);
+    border-bottom: 1px solid var(--c-border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.nav-left,
+.nav-right {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-toggle {
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--c-icon);
+    margin-right: 20px;
+}
+
+/* Main Content */
+.main-content {
+    padding: 30px;
+    overflow-y: auto;
+    height: 100%;
+    background-color: var(--c-bkg-body);
+}
+
+/* =========================================================================
+   UTILITIES (Mimicking Adminator classes)
+   ========================================================================= */
+.bgc-white {
+    background-color: var(--c-bkg-card) !important;
+}
+
+.bgc-grey-100 {
+    background-color: #f9fafb !important;
+}
+
+.bgc-grey-50 {
+    background-color: #f9fafb !important;
+}
+
+.c-grey-900 {
+    color: #1e293b !important;
+}
+
+.c-grey-700 {
+    color: #64748b !important;
+}
+
+.c-grey-600 {
+    color: #788596 !important;
+}
+
+.c-blue-500 {
+    color: var(--c-primary) !important;
+}
+
+.c-green-500 {
+    color: var(--c-success) !important;
+}
+
+.c-purple-500 {
+    color: #8b5cf6 !important;
+}
+
+.c-orange-500 {
+    color: var(--c-warning) !important;
+}
+
+.c-pink-500 {
+    color: #ec4899 !important;
+}
+
+.c-teal-500 {
+    color: #14b8a6 !important;
+}
+
+.c-white {
+    color: #fff !important;
+}
+
+.p-20 {
+    padding: 20px !important;
+}
+
+.p-10 {
+    padding: 10px !important;
+}
+
+.mB-20 {
+    margin-bottom: 20px !important;
+}
+
+.mB-30 {
+    margin-bottom: 30px !important;
+}
+
+.mB-10 {
+    margin-bottom: 10px !important;
+}
+
+.mB-5 {
+    margin-bottom: 5px !important;
+}
+
+.mR-10 {
+    margin-right: 10px !important;
+}
+
+.mR-20 {
+    margin-right: 20px !important;
+}
+
+.mT-10 {
+    margin-top: 10px !important;
+}
+
+.mT-30 {
+    margin-top: 30px !important;
+}
+
+.bd {
+    border: 1px solid var(--c-border) !important;
+}
+
+.bdrs-4 {
+    border-radius: 4px !important;
+}
+
+.bdrs-50p {
+    border-radius: 50% !important;
+}
+
+.d-ib {
+    display: inline-block !important;
+}
+
+.cur-p {
+    cursor: pointer !important;
+}
+
+.pos-r {
+    position: relative !important;
+}
+
+.fsz-lg {
+    font-size: 1.5rem !important;
+}
+
+.fsz-xl {
+    font-size: 2rem !important;
+}
+
+.fsz-sm {
+    font-size: 0.875rem !important;
+}
+
+.fw-600 {
+    font-weight: 600 !important;
+}
+
+/* Flexbox helpers (Peers) */
+.peers {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.ai-c {
+    align-items: center;
+}
+
+.jc-sb {
+    justify-content: space-between;
+}
+
+.fxw-nw {
+    flex-wrap: nowrap;
+}
+
+.peer {
+    flex: 0 0 auto;
+}
+
+.peer-greed {
+    flex: 1 1 auto;
+}
+
+.gap-20 {
+    gap: 20px;
+}
+
+/* Grid Override - Adminator uses its own grid sometimes, we use Bootstrap's */
+.masonry-item {
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+.btn-success {
+    background-color: var(--c-success);
+    border-color: var(--c-success);
+}
+
+.btn-info {
+    background-color: var(--c-info);
+    border-color: var(--c-info);
+}
+
+.btn-warning {
+    background-color: var(--c-warning);
+    border-color: var(--c-warning);
+    color: white;
+}
+
+/* Forms */
+.form-control {
+    border: 1px solid var(--c-border);
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus {
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Badges */
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.bg-success {
+    background-color: var(--c-success) !important;
+}
+
+.bg-primary {
+    background-color: var(--c-primary) !important;
+}
+
+.bg-warning {
+    background-color: var(--c-warning) !important;
+}
+
+/* Colors */
+.bgc-blue-50 {
+    background-color: #e0e7ff !important;
+}
+
+.bgc-green-50 {
+    background-color: #d1fae5 !important;
+}
+
+.bgc-purple-50 {
+    background-color: #ede9fe !important;
+}
+
+.bgc-orange-50 {
+    background-color: #fef3c7 !important;
+}
+
+.bgc-pink-50 {
+    background-color: #fce7f3 !important;
+}
+
+.bgc-teal-50 {
+    background-color: #ccfbf1 !important;
+}

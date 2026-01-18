@@ -1,0 +1,94 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Neural Search - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">🧠 Neural Information Retrieval</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <div class="row gap-20">
+                            <div class="col-md-6">
+                                <div class="bgc-blue-50 p-15 bdrs-4 h-100">
+                                    <h6 class="c-blue-700">Dense Retrieval</h6>
+                                    <p class="mB-0 fsz-sm">Matches <strong>meanings</strong> rather than keywords using
+                                        vector embeddings (e.g., BERT, Word2Vec).</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bgc-purple-50 p-15 bdrs-4 h-100">
+                                    <h6 class="c-purple-700">RAG (Retrieval-Augmented Generation)</h6>
+                                    <p class="mB-0 fsz-sm">Retrieves relevant docs and feeds them to an LLM to generate
+                                        natural language answers.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Section -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔎 Semantic Search Demo</h4>
+
+                    <div class="alert alert-warning">
+                        <i class="ti-info-alt mR-10"></i> This module requires a running Weaviate/Qdrant instance and a
+                        GPU for embedding generation.
+                        <strong>Currently running in simulation mode.</strong>
+                    </div>
+
+                    <!-- Simulated Results -->
+                    <div class="table-responsive mB-20">
+                        <table class="table table-hover">
+                            <thead class="bgc-grey-50">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Relevance</th>
+                                    <th>Document Snippet</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><span class="badge bgc-green-50 c-green-700">0.92</span></td>
+                                    <td>...vector space models allow for geometric interpretation of...</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><span class="badge bgc-green-50 c-green-700">0.88</span></td>
+                                    <td>...neural networks can learn dense representations of text...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- RAG Output -->
+                    <div class="bgc-grey-50 p-20 bdrs-4 bd b-l-purple bdw-4">
+                        <h5 class="c-purple-700 mB-15">🤖 RAG Generated Answer</h5>
+
+                        <div class="mB-15">
+                            <strong class="d-b c-grey-700 mB-5 fsz-sm text-uppercase">Context Retrieved:</strong>
+                            <p class="fsz-sm c-grey-600 i">{{ context_preview }}...</p>
+                        </div>
+
+                        <hr>
+
+                        <div>
+                            <strong class="d-b c-grey-700 mB-5 fsz-sm text-uppercase">Answer:</strong>
+                            <p class="mB-0 fsz-md c-grey-900">{{ rag_answer }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

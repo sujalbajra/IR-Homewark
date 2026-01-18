@@ -1,0 +1,95 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Distributed IR - MapReduce{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 text-center">
+                    <h2 class="c-grey-900 mB-10">Distributed Indexing Simulation</h2>
+                    <p class="c-grey-600 fsz-lg">Simulate MapReduce framework for inverted index construction.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h5 class="c-grey-900 mB-20">Control Panel</h5>
+                    <form method="POST">
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                            <i class="fas fa-network-wired mR-10"></i> Run MapReduce Job
+                        </button>
+                    </form>
+                    <div class="mT-30">
+                        <h6>Architecture:</h6>
+                        <ul class="list-unstyled">
+                            <li class="mB-10"><span class="badge badge-success">Master</span> Coordinates job</li>
+                            <li class="mB-10"><span class="badge badge-info">Map</span> Tokenzies & emits pairs</li>
+                            <li class="mB-10"><span class="badge badge-warning">Shuffle</span> Partitions by key hash
+                            </li>
+                            <li class="mB-10"><span class="badge badge-danger">Reduce</span> Aggregates posting lists
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                {% if logs %}
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h5 class="c-grey-900 mB-20">Cluster Logs</h5>
+                    <div class="layer w-100 bgc-grey-50 p-15"
+                        style="max-height: 400px; overflow-y: auto; font-family: monospace;">
+                        {% for log in logs %}
+                        <div class="mB-5 border-bottom pb-1">
+                            {% if 'MASTER' in log %}
+                            <span class="text-primary font-weight-bold">{{ log.split(']')[0] }}]</span> {{
+                            log.split(']')[1] }}
+                            {% elif 'MAP' in log %}
+                            <span class="text-info">{{ log.split(']')[0] }}]</span> {{ log.split(']')[1] }}
+                            {% elif 'SHUFFLE' in log %}
+                            <span class="text-warning">{{ log.split(']')[0] }}]</span> {{ log.split(']')[1] }}
+                            {% elif 'REDUCE' in log %}
+                            <span class="text-danger">{{ log.split(']')[0] }}]</span> {{ log.split(']')[1] }}
+                            {% else %}
+                            {{ log }}
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h5 class="c-grey-900 mB-20">Generated Index (Preview)</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th>Term (Key)</th>
+                                    <th>Posting List (Value)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for term, postings in index_preview.items() %}
+                                <tr>
+                                    <td class="font-weight-bold text-primary">{{ term }}</td>
+                                    <td>{{ postings }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% else %}
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 text-center py-5">
+                    <i class="fas fa-server fa-3x text-muted mb-3"></i>
+                    <p>Cluster is idle. Click "Run MapReduce Job" to start.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

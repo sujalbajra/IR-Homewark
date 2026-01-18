@@ -1,0 +1,53 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Cross-Lingual IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="bgc-white bd bdrs-3 p-20 mB-20">
+            <h4 class="c-grey-900 mB-20">🌏 Cross-Lingual Search (English → Nepali)</h4>
+
+            <form method="POST">
+                <div class="input-group input-group-lg mB-20">
+                    <input type="text" name="query" class="form-control"
+                        placeholder="Search in English (e.g., 'sports in nepal')" value="{{ query_en if query_en }}">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+
+            {% if query_ne %}
+            <div class="alert alert-info">
+                <strong>Translated Query (Nepali):</strong> {{ query_ne }}
+            </div>
+            {% endif %}
+
+            {% if results %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Document</th>
+                            <th>Relevance Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc_id, score in results %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ doc_id }}</td>
+                            <td><span class="badge badge-success">{{ "%.4f"|format(score) }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% elif query_en %}
+            <div class="alert alert-warning">No results found for translated query.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

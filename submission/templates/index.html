@@ -1,0 +1,132 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Dashboard - Nepali IR System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h4 class="c-grey-900 mT-10 mB-30">Dashboard</h4>
+
+    <!-- Stats Row -->
+    <div class="row gap-20 masonry pos-r">
+        <div class="col-md-6">
+            <div class="layers bd bgc-white p-20">
+                <div class="layer w-100">
+                    <div class="peers ai-c jc-sb">
+                        <div class="peer">
+                            <h4 class="c-grey-900 mB-5">📂 Total Documents</h4>
+                            <p class="mB-0 fsz-lg fw-600 c-blue-500">{{ doc_count }}</p>
+                        </div>
+                        <div class="peer">
+                            <span class="d-ib p-20 bdrs-50p bg-primary">
+                                <i class="ti-files c-white fsz-xl"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="layers bd bgc-white p-20">
+                <div class="layer w-100">
+                    <div class="peers ai-c jc-sb">
+                        <div class="peer">
+                            <h4 class="c-grey-900 mB-5">🔧 IR Modules</h4>
+                            <p class="mB-0 fsz-lg fw-600 c-green-500">14 Modules</p>
+                        </div>
+                        <div class="peer">
+                            <span class="d-ib p-20 bdrs-50p bg-success">
+                                <i class="ti-check-box c-white fsz-xl"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="row mT-30">
+        <div class="col-md-12">
+            <div class="bd bgc-white p-20">
+                <h5 class="c-grey-900 mB-20">System Features</h5>
+
+                <div class="row">
+                    <div class="col-md-4 mB-20">
+                        <div class="bgc-blue-50 p-20 bdrs-4">
+                            <h6 class="c-blue-500"><i class="ti-search mR-10"></i>Boolean Search</h6>
+                            <p class="fsz-sm c-grey-700">AND, OR, NOT operations on 7,520 documents</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mB-20">
+                        <div class="bgc-green-50 p-20 bdrs-4">
+                            <h6 class="c-green-500"><i class="ti-star mR-10"></i>Vector Space Model</h6>
+                            <p class="fsz-sm c-grey-700">Cosine similarity-based ranking</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mB-20">
+                        <div class="bgc-purple-50 p-20 bdrs-4">
+                            <h6 class="c-purple-500"><i class="ti-text mR-10"></i>Nepali NLP</h6>
+                            <p class="fsz-sm c-grey-700">NepaliKit tokenization with 95% accuracy</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mB-20">
+                        <div class="bgc-orange-50 p-20 bdrs-4">
+                            <h6 class="c-orange-500"><i class="ti-stats-up mR-10"></i>Ranking Algorithms</h6>
+                            <p class="fsz-sm c-grey-700">BM25, TF-IDF, PageRank, HITS</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mB-20">
+                        <div class="bgc-pink-50 p-20 bdrs-4">
+                            <h6 class="c-pink-500"><i class="ti-shine mR-10"></i>Neural IR</h6>
+                            <p class="fsz-sm c-grey-700">FastText embeddings (36k vocabulary)</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mB-20">
+                        <div class="bgc-teal-50 p-20 bdrs-4">
+                            <h6 class="c-teal-500"><i class="ti-bar-chart mR-10"></i>Evaluation Metrics</h6>
+                            <p class="fsz-sm c-grey-700">MAP, NDCG, Precision, Recall, F1</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row mT-30">
+        <div class="col-md-12">
+            <div class="bd bgc-white p-20">
+                <h5 class="c-grey-900 mB-20">Quick Actions</h5>
+                <div class="peers">
+                    <div class="peer mR-20">
+                        <a href="{{ url_for('text_analysis.text_analysis_pipeline') }}" class="btn cur-p btn-primary">
+                            <i class="ti-pencil mR-5"></i> Text Analysis
+                        </a>
+                    </div>
+                    <div class="peer mR-20">
+                        <a href="{{ url_for('foundations.boolean_search') }}" class="btn cur-p btn-success">
+                            <i class="ti-search mR-5"></i> Search Documents
+                        </a>
+                    </div>
+                    <div class="peer mR-20">
+                        <a href="{{ url_for('ranking.ranking_compare') }}" class="btn cur-p btn-warning">
+                            <i class="ti-stats-up mR-5"></i> Compare Rankings
+                        </a>
+                    </div>
+                    <div class="peer">
+                        <a href="{{ url_for('nlp.synonyms_finder') }}" class="btn cur-p btn-info">
+                            <i class="ti-files mR-5"></i> Find Synonyms
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

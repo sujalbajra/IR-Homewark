@@ -1,0 +1,40 @@
+VOCABULARY STATISTICS
+================================================================================
+
+Tag          NERData      CoNLL        Total        Unique       Removed     
+--------------------------------------------------------------------------------
+PER          5956         2885         8841         2336         6505        
+LOC          3133         446          3579         1013         2566        
+ORG          5145         419          5564         1327         4237        
+GENERAL      0            5745         5745         2435         3310        
+PROFANITY    0            743          743          258          485         
+VIOLENCE     0            690          690          358          332         
+FEEDBACK     0            1101         1101         557          544         
+MISC         0            1226         1226         375          851         
+O            84803        50546        135349       17087        118262      
+--------------------------------------------------------------------------------
+TOTAL        99037        63801        162838       25746        137092      
+
+================================================================================
+COMBINED VOCABULARY (All Tags)
+================================================================================
+Total words across all tags: 25746
+Unique words across all tags: 22240
+Duplicates across tags: 3506
+
+================================================================================
+OUTPUT FILES
+================================================================================
+Individual vocabularies:
+  - PER_vocab.txt
+  - LOC_vocab.txt
+  - ORG_vocab.txt
+  - GENERAL_vocab.txt
+  - PROFANITY_vocab.txt
+  - VIOLENCE_vocab.txt
+  - FEEDBACK_vocab.txt
+  - MISC_vocab.txt
+  - O_vocab.txt
+
+Combined vocabulary:
+  - combined_vocab.txt

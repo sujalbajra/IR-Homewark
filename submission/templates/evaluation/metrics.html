@@ -1,0 +1,191 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Evaluation Metrics - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📘 IR Evaluation Measures</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">We evaluate retrieval systems using precision, recall, and F-measure.</p>
+                        <div class="row gap-20">
+                            <div class="col-md-4">
+                                <div class="bgc-purple-50 p-15 bdrs-4 ta-c">
+                                    <h6 class="c-purple-700">Precision</h6>
+                                    <small>Relevant Retrieved / Total Retrieved</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bgc-orange-50 p-15 bdrs-4 ta-c">
+                                    <h6 class="c-orange-700">Recall</h6>
+                                    <small>Relevant Retrieved / Total Relevant</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bgc-red-50 p-15 bdrs-4 ta-c">
+                                    <h6 class="c-red-700">F1 Score</h6>
+                                    <small>Harmonic Mean of Precision & Recall</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculator Section -->
+            <div class="col-md-5">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🧮 Run Evaluation</h4>
+
+                    <!-- Scenario Form -->
+                    <form method="POST" class="mb-4">
+                        <label class="form-label fw-500">1. Select a Pre-defined Scenario</label>
+                        <div class="input-group">
+                            <select name="query_id" class="form-control">
+                                <option value="" disabled selected>Choose a query...</option>
+                                {% for q_id, scen in scenarios.items() %}
+                                <option value="{{ q_id }}" {% if selected_query==q_id %}selected{% endif %}>
+                                    {{ scen.query }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary">Run</button>
+                        </div>
+                        <small class="text-muted d-block mt-2">Test the system on 5 curated queries.</small>
+                    </form>
+
+                    <hr>
+
+                    <!-- Manual Form -->
+                    <form method="POST">
+                        <label class="form-label fw-500 mb-3">2. Or Enter Manual Values</label>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label>TP</label>
+                                <input type="number" name="tp" class="form-control"
+                                    value="{{ metrics.tp if metrics and metrics.mode == 'manual' else 0 }}" min="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>FP</label>
+                                <input type="number" name="fp" class="form-control"
+                                    value="{{ metrics.fp if metrics and metrics.mode == 'manual' else 0 }}" min="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>FN</label>
+                                <input type="number" name="fn" class="form-control"
+                                    value="{{ metrics.fn if metrics and metrics.mode == 'manual' else 0 }}" min="0">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-secondary w-100 btn-sm">Calculate Manual
+                            Scores</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-7">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">Results Analysis</h4>
+
+                    {% if metrics %}
+                    {% if metrics.mode == 'scenario' %}
+                    <div class="alert alert-info">
+                        <strong>Query:</strong> {{ metrics.query_text }}<br>
+                        <small>{{ metrics.description }}</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="row text-center mb-4">
+                        <div class="col-4">
+                            <h3 class="c-purple-700 mB-0">{{ "%.3f"|format(metrics.precision) }}</h3>
+                            <small class="text-uppercase fw-600 text-muted">Precision</small>
+                        </div>
+                        <div class="col-4">
+                            <h3 class="c-orange-700 mB-0">{{ "%.3f"|format(metrics.recall) }}</h3>
+                            <small class="text-uppercase fw-600 text-muted">Recall</small>
+                        </div>
+                        <div class="col-4">
+                            <h3 class="c-red-700 mB-0">{{ "%.3f"|format(metrics.f1) }}</h3>
+                            <small class="text-uppercase fw-600 text-muted">F1 Score</small>
+                        </div>
+                    </div>
+
+                    <!-- Visualization Bars -->
+                    <div class="layers">
+                        <div class="layer w-100 mB-10">
+                            <div class="d-flex justify-content-between">
+                                <small>Precision</small>
+                                <small>{{ "%.1f"|format(metrics.precision * 100) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bgc-purple-500" style="width: {{ metrics.precision * 100 }}%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layer w-100 mB-10">
+                            <div class="d-flex justify-content-between">
+                                <small>Recall</small>
+                                <small>{{ "%.1f"|format(metrics.recall * 100) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bgc-orange-500" style="width: {{ metrics.recall * 100 }}%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layer w-100 mB-20">
+                            <div class="d-flex justify-content-between">
+                                <small>F1 Score</small>
+                                <small>{{ "%.1f"|format(metrics.f1 * 100) }}%</small>
+                            </div>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bgc-red-500" style="width: {{ metrics.f1 * 100 }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if metrics.mode == 'scenario' %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Confusion Matrix Data</h6>
+                            <ul class="list-unstyled">
+                                <li class="d-flex justify-content-between text-success">
+                                    <span>True Positives (TP):</span> <strong>{{ metrics.tp }}</strong>
+                                </li>
+                                <li class="d-flex justify-content-between text-danger">
+                                    <span>False Positives (FP):</span> <strong>{{ metrics.fp }}</strong>
+                                </li>
+                                <li class="d-flex justify-content-between text-warning">
+                                    <span>False Negatives (FN):</span> <strong>{{ metrics.fn }}</strong>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Details</h6>
+                            <div style="max-height: 100px; overflow-y: auto; font-size: 12px;">
+                                <strong>Relevant Docs:</strong> {{ metrics.relevant|join(', ') }}<br>
+                                <strong>Retrieved Docs:</strong> {{ metrics.retrieved|join(', ') }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% else %}
+                    <div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted p-40">
+                        <i class="ti-bar-chart fs-1 mb-3"></i>
+                        <p>Select a scenario or enter values to view metrics.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

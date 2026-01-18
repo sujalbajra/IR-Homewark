@@ -1,0 +1,233 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Ranking Comparison - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Header Section with Modern Gradient -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 text-center">
+                    <h2 class="c-grey-900 mB-10">Algorithm Showdown</h2>
+                    <p class="c-grey-600 fsz-lg">Compare TF-IDF vs. BM25 performance in real-time.</p>
+                </div>
+            </div>
+
+            <!-- Theory Cards -->
+            <div class="col-md-6">
+                <div class="bd bgc-white p-20 ht-100p">
+                    <div class="layers">
+                        <div class="layer w-100 mB-10">
+                            <h5 class="lh-1 c-blue-500">TF-IDF</h5>
+                        </div>
+                        <div class="layer w-100">
+                            <p class="c-grey-700">The classic baseline. Weighs terms by how rare they are in the
+                                dataset.</p>
+                            <span class="badge bgc-blue-50 c-blue-700 p-10 lh-0 tt-c badge-pill">Best for specific
+                                keyword matching</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="bd bgc-white p-20 ht-100p">
+                    <div class="layers">
+                        <div class="layer w-100 mB-10">
+                            <h5 class="lh-1 c-green-500">BM25</h5>
+                        </div>
+                        <div class="layer w-100">
+                            <p class="c-grey-700">The industry standard. Adds term saturation and length normalization
+                                logic.</p>
+                            <span class="badge bgc-green-50 c-green-700 p-10 lh-0 tt-c badge-pill">Best for natural
+                                language queries</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Action Area -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">run_comparison()</h4>
+
+                    <form method="POST">
+                        <div class="input-group input-group-lg mB-20">
+                            <input type="text" name="query" class="form-control" placeholder="Enter search query..."
+                                aria-label="Search" required style="border-right: none;" value="{{ query if query }}">
+
+                            <select name="top_k" class="form-control"
+                                style="max-width: 100px; border-left: 1px solid #ced4da;">
+                                <option value="5" {% if top_k==5 %}selected{% endif %}>Top 5</option>
+                                <option value="10" {% if top_k==10 %}selected{% endif %}>Top 10</option>
+                                <option value="20" {% if top_k==20 %}selected{% endif %}>Top 20</option>
+                                <option value="50" {% if top_k==50 %}selected{% endif %}>Top 50</option>
+                            </select>
+
+                            <button class="btn btn-primary cur-p" type="submit" style="z-index: 5;">
+                                <i class="ti-exchange-vertical mR-10"></i> Compare
+                            </button>
+                        </div>
+
+                        <div class="peers fxw-nw ai-c gap-10">
+                            <button type="button" onclick="document.querySelector('input[name=query]').value='राजनीति'"
+                                class="peer btn btn-outline-dark btn-sm rounded-pill px-3">Politics</button>
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='खेलकुद विकास'"
+                                class="peer btn btn-outline-dark btn-sm rounded-pill px-3">Sports Dev</button>
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='वातावरण संरक्षण'"
+                                class="peer btn btn-outline-dark btn-sm rounded-pill px-3">Environment</button>
+                        </div>
+                    </form>
+                    <!-- Query Analysis Result -->
+                    {% if query_analysis %}
+                    <div class="col-md-12">
+                        <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                            <h5 class="c-grey-900 mB-10">Query Analysis</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Intent:</strong> <span class="badge badge-info">{{ query_analysis.intent
+                                        }}</span>
+                                </div>
+                                <div class="col-md-8">
+                                    <strong>Entities:</strong>
+                                    {% if query_analysis.entities %}
+                                    {% for entity in query_analysis.entities %}
+                                    <span class="badge badge-primary">{{ entity.text }} ({{ entity.type }})</span>
+                                    {% endfor %}
+                                    {% else %}
+                                    <span class="text-muted">No entities detected</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Results Comparison -->
+                    {% if results_tfidf or results_bm25 or results_bim %}
+                    <div class="col-md-12">
+                        <div class="row gap-20">
+                            <!-- TF-IDF Column -->
+                            <div class="col-md-4">
+                                <div class="bd bgc-white p-20">
+                                    <div class="layers">
+                                        <div class="layer w-100 mB-20 bdB pB-10">
+                                            <h5 class="lh-1 c-blue-500">TF-IDF Ranking</h5>
+                                        </div>
+                                        <div class="layer w-100">
+                                            {% if results_tfidf %}
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="bdw-0">Rank</th>
+                                                            <th class="bdw-0">Document</th>
+                                                            <th class="bdw-0">Score</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for doc_id, score in results_tfidf %}
+                                                        <tr>
+                                                            <td class="fw-600 c-grey-700">{{ loop.index }}</td>
+                                                            <td><span class="c-grey-800">{{ doc_id }}</span></td>
+                                                            <td><span class="badge bgc-blue-50 c-blue-700">{{
+                                                                    "%.4f"|format(score) }}</span></td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% else %}
+                                            <div class="alert alert-warning">No matches found.</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BM25 Column -->
+                            <div class="col-md-4">
+                                <div class="bd bgc-white p-20">
+                                    <div class="layers">
+                                        <div class="layer w-100 mB-20 bdB pB-10">
+                                            <h5 class="lh-1 c-green-500">BM25 Ranking</h5>
+                                        </div>
+                                        <div class="layer w-100">
+                                            {% if results_bm25 %}
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="bdw-0">Rank</th>
+                                                            <th class="bdw-0">Document</th>
+                                                            <th class="bdw-0">Score</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for doc_id, score in results_bm25 %}
+                                                        <tr>
+                                                            <td class="fw-600 c-grey-700">{{ loop.index }}</td>
+                                                            <td><span class="c-grey-800">{{ doc_id }}</span></td>
+                                                            <td><span class="badge bgc-green-50 c-green-700">{{
+                                                                    "%.4f"|format(score) }}</span></td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% else %}
+                                            <div class="alert alert-warning">No matches found.</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BIM Column -->
+                            <div class="col-md-4">
+                                <div class="bd bgc-white p-20">
+                                    <div class="layers">
+                                        <div class="layer w-100 mB-20 bdB pB-10">
+                                            <h5 class="lh-1 c-purple-500">BIM Ranking</h5>
+                                        </div>
+                                        <div class="layer w-100">
+                                            {% if results_bim %}
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="bdw-0">Rank</th>
+                                                            <th class="bdw-0">Document</th>
+                                                            <th class="bdw-0">Score</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for doc_id, score in results_bim %}
+                                                        <tr>
+                                                            <td class="fw-600 c-grey-700">{{ loop.index }}</td>
+                                                            <td><span class="c-grey-800">{{ doc_id }}</span></td>
+                                                            <td><span class="badge bgc-purple-50 c-purple-700">{{
+                                                                    "%.4f"|format(score) }}</span></td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% else %}
+                                            <div class="alert alert-warning">No matches found.</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base_admin.html" %}
+
+{% block title %}AI Ethics - Bias Detection{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="bgc-white bd bdrs-3 p-20 mB-20">
+            <h4 class="c-grey-900 mB-20">⚖️ Gender Bias Analysis</h4>
+
+            <!-- Overall Stats -->
+            <div class="row mB-40">
+                <div class="col-md-4">
+                    <div class="layers bd bgc-grey-50 p-20">
+                        <div class="layer w-100 mB-10">
+                            <h6 class="lh-1">Collection Bias Score</h6>
+                        </div>
+                        <div class="layer w-100">
+                            <h2 class="lh-1 c-grey-900">{{ stats.collection_bias }}</h2>
+                            <small class="text-muted">(-1.0 Female to +1.0 Male)</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="layers bd bgc-grey-50 p-20">
+                        <div class="layer w-100 mB-10">
+                            <h6 class="lh-1">Male Terms</h6>
+                        </div>
+                        <div class="layer w-100">
+                            <h2 class="lh-1 c-blue-500">{{ stats.collection_male }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="layers bd bgc-grey-50 p-20">
+                        <div class="layer w-100 mB-10">
+                            <h6 class="lh-1">Female Terms</h6>
+                        </div>
+                        <div class="layer w-100">
+                            <h2 class="lh-1 c-pink-500">{{ stats.collection_female }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Details -->
+            <h5 class="c-grey-900 mB-20">Document Breakdown</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Document</th>
+                            <th>Bias Score</th>
+                            <th>Verdict</th>
+                            <th>M/F Ratio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in details %}
+                        <tr>
+                            <td>{{ doc.doc_id }}</td>
+                            <td>
+                                {% if doc.bias_score > 0.2 %}
+                                <span class="badge badge-primary">{{ doc.bias_score }}</span>
+                                {% elif doc.bias_score < -0.2 %} <span class="badge badge-danger">{{ doc.bias_score
+                                    }}</span>
+                                    {% else %}
+                                    <span class="badge badge-success">{{ doc.bias_score }}</span>
+                                    {% endif %}
+                            </td>
+                            <td>{{ doc.verdict }}</td>
+                            <td>{{ doc.male_count }} : {{ doc.female_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

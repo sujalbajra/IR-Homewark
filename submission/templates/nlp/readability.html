@@ -1,0 +1,119 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Nepali Readability Analyzer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="card-title">Nepali Readability Analyzer</h4>
+                <p class="text-muted mb-0">Calculate readability scores (Flesch-Kincaid, Gunning Fog, etc.) for Nepali
+                    text.</p>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <div class="mb-2 text-right">
+                            <small class="text-muted mr-2">Quick Examples:</small>
+                            <button type="button" class="btn btn-sm btn-outline-info"
+                                onclick="document.getElementById('text').value = 'नेपाल एक सुन्दर देश हो । हिमाल, पहाड र तराई मिलेर बनेको यो देशमा धेरै पर्यटक आउँछन् ।'">Simple</button>
+                            <button type="button" class="btn btn-sm btn-outline-warning"
+                                onclick="document.getElementById('text').value = 'जलवायु परिवर्तनले विश्वव्यापी रूपमा गम्भीर असर पारिरहेको छ । यसले गर्दा पृथ्वीको तापक्रम बढ्दै गइरहेको छ र मौसममा अनपेक्षित परिवर्तनहरू देखा परिरहेका छन् ।'">Complex</button>
+                        </div>
+                        <label for="text">Enter Nepali Text:</label>
+                        <textarea class="form-control" id="text" name="text" rows="8" required
+                            placeholder="यहाँ नेपाली पाठ टाँस्नुहोस्...">{{ text if text else '' }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Analyze Readability</button>
+                    {% if text %}
+                    <a href="{{ url_for('nlp.readability_score') }}" class="btn btn-secondary mt-3 ml-2">Clear</a>
+                    {% endif %}
+                </form>
+
+                {% if results %}
+                <hr class="mt-4 mb-4">
+
+                {% if results.error %}
+                <div class="alert alert-warning">{{ results.error }}</div>
+                {% else %}
+                <h5 class="mb-3">Readability Scores</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h3>{{ "%.2f"|format(results.flesch_kincaid) }}</h3>
+                                <small>Flesch-Kincaid Grade</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h3>{{ "%.2f"|format(results.flesch_reading_ease) }}</h3>
+                                <small>Flesch Reading Ease</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h3>{{ "%.2f"|format(results.gunning_fog) }}</h3>
+                                <small>Gunning Fog Index</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bd bdrs-3 p-15"> <!-- Added card wrapper -->
+                            <h6 class="c-grey-900 mB-20">📊 Additional Metrics</h6>
+                            <ul class="list-group list-group-flush"> <!-- Use flush list for card integration -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Coleman-Liau Index</span>
+                                    <span class="badge bg-secondary text-white">{{ "%.2f"|format(results.coleman_liau)
+                                        }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Automated Readability Index (ARI)</span>
+                                    <span class="badge bg-secondary text-white">{{ "%.2f"|format(results.ari) }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>SMOG Index</span>
+                                    <span class="badge bg-secondary text-white">{{ "%.2f"|format(results.smog) }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bd bdrs-3 p-15"> <!-- Added card wrapper -->
+                            <h6 class="c-grey-900 mB-20">📝 Text Statistics</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Sentences</span>
+                                    <span class="badge bg-light text-dark border">{{ results.sentences }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Words</span>
+                                    <span class="badge bg-light text-dark border">{{ results.words }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Syllables</span>
+                                    <span class="badge bg-light text-dark border">{{ results.syllables }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Difficult Words</span>
+                                    <span class="badge bg-danger text-white">{{ results.difficult_words }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

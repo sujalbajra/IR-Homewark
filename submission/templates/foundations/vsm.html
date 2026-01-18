@@ -1,0 +1,107 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Vector Space Model - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📘 Vector Space Model (VSM)</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Documents and queries are represented as vectors in a multi-dimensional
+                            space.</p>
+                        <ul class="mB-0">
+                            <li><strong>TF-IDF Weighting:</strong> Assigns weights to terms based on frequency.</li>
+                            <li><strong>Cosine Similarity:</strong> Measures the angle between the query vector and
+                                document vector.</li>
+                            <li><strong>Ranking:</strong> Documents are ranked by their similarity score (0 to 1).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔍 Interactive VSM Search</h4>
+
+                    <div class="bgc-grey-100 p-15 bdrs-4 mB-20">
+                        <strong class="d-b mB-10">Quick Examples:</strong>
+                        <div class="peers fxw-nw ai-c gap-10">
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='जलवायु परिवर्तन'"
+                                class="peer btn btn-outline-primary btn-sm">जलवायु परिवर्तन</button>
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='आर्थिक विकास'"
+                                class="peer btn btn-outline-primary btn-sm">आर्थिक विकास</button>
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='पर्यटन उद्योग'"
+                                class="peer btn btn-outline-primary btn-sm">पर्यटन उद्योग</button>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label class="form-label fw-500">Enter Query Terms</label>
+                                <input type="text" name="query" class="form-control" placeholder="e.g., climate change"
+                                    required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-500">K (Top Results)</label>
+                                <input type="number" name="k" class="form-control" value="5" min="1" max="20">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            {% if results is not none %}
+            <div class="col-md-12">
+                <div class="bd bgc-white p-20">
+                    <h5 class="c-grey-900 mB-20">Results: Top <span class="c-blue-500">{{ k }}</span> Documents</h5>
+                    {% if results %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Score</th>
+                                    <th>Document ID</th>
+                                    <th>Preview</th>
+                                    <th>Link</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc_id, score in results %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td><span class="badge bg-success">{{ "%.4f"|format(score) }}</span></td>
+                                    <td class="fw-bold">{{ doc_id }}</td>
+                                    <td>{{ doc_previews.get(doc_id, '')[:100] }}...</td>
+                                    <td>
+                                        <a href="{{ url_for('general.view_document', filename=doc_id) }}"
+                                            class="btn btn-sm btn-info text-white">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mB-0">No documents matched your query.</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% endblock %}

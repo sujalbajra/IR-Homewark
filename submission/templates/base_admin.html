@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Nepali IR System{% endblock %}</title>
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Adminator Theme Variables & Icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminator/css/utils/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminator/css/vendor/themify-icons.css') }}">
+
+    <!-- Custom Layout (Replces compiled style.css) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminator/css/custom_admin.css') }}">
+
+    <!-- Custom Overrides -->
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --sidebar-width: 250px;
+        }
+
+        .app-logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .sidebar-link.active {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .theory-box {
+            background: #f5f7fa;
+            padding: 15px;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .demo-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .demo-form input[type="text"],
+        .demo-form input[type="number"],
+        .demo-form select,
+        .demo-form textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .demo-form button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .demo-form button:hover {
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table th {
+            background: #f5f7fa;
+            font-weight: 600;
+            color: #555;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="app">
+    <div>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-inner">
+                <!-- Logo -->
+                <div class="sidebar-logo">
+                    <div class="peers ai-c fxw-nw">
+                        <div class="peer peer-greed">
+                            <a class="sidebar-link td-n" href="{{ url_for('general.index') }}">
+                                <div class="peers ai-c fxw-nw">
+                                    <div class="peer peer-greed">
+                                        <h5 class="lh-1 mB-0 logo-text app-logo">🇳🇵 Nepali IR</h5>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="peer">
+                            <div class="mobile-toggle sidebar-toggle">
+                                <a href="#" class="td-n">
+                                    <i class="ti-arrow-circle-left"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menu -->
+                <ul class="sidebar-menu scrollable pos-r">
+                    <li class="nav-item mT-30">
+                        <a class="sidebar-link" href="{{ url_for('general.index') }}">
+                            <span class="icon-holder">
+                                <i class="ti-home"></i>
+                            </span>
+                            <span class="title">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="sidebar-link" href="{{ url_for('general.documents') }}">
+                            <span class="icon-holder">
+                                <i class="ti-folder"></i>
+                            </span>
+                            <span class="title">Documents</span>
+                        </a>
+                    </li>
+
+                    <!-- Foundations -->
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="ti-layout"></i>
+                            </span>
+                            <span class="title">I. Foundations</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('foundations.boolean_search') }}">Boolean
+                                    Search</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('foundations.vector_space_model') }}">Vector
+                                    Space
+                                    Model</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Text Analysis -->
+                    <li class="nav-item">
+                        <a class="sidebar-link" href="{{ url_for('text_analysis.text_analysis_pipeline') }}">
+                            <span class="icon-holder">
+                                <i class="ti-text"></i>
+                            </span>
+                            <span class="title">II. Text Analysis</span>
+                        </a>
+                    </li>
+
+                    <!-- Indexing -->
+                    <li class="nav-item">
+                        <a class="sidebar-link" href="{{ url_for('indexing.indexing_demo') }}">
+                            <span class="icon-holder">
+                                <i class="ti-server"></i>
+                            </span>
+                            <span class="title">III. Indexing</span>
+                        </a>
+                    </li>
+
+                    <!-- Query Processing -->
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="ti-search"></i>
+                            </span>
+                            <span class="title">IV. Query Processing</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('query_proc.query_wildcard') }}">Wildcard
+                                    Queries</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('query_proc.query_spellcheck') }}">Spell
+                                    Corrector</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Ranking -->
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="ti-stats-up"></i>
+                            </span>
+                            <span class="title">V. Ranking</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('ranking.ranking_compare') }}">BM25 vs
+                                    TF-IDF</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('ranking.ranking_pagerank') }}">PageRank &
+                                    HITS</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Neural IR -->
+                    <li class="nav-item">
+                        <a class="sidebar-link" href="{{ url_for('neural.neural_search') }}">
+                            <span class="icon-holder">
+                                <i class="ti-shine"></i>
+                            </span>
+                            <span class="title">VI. Neural IR</span>
+                        </a>
+                    </li>
+
+                    <!-- Evaluation -->
+                    <li class="nav-item">
+                        <a class="sidebar-link" href="{{ url_for('evaluation.evaluation_demo') }}">
+                            <span class="icon-holder">
+                                <i class="ti-bar-chart"></i>
+                            </span>
+                            <span class="title">VII. Evaluation</span>
+                        </a>
+                    </li>
+
+                    <!-- Web Search -->
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="ti-world"></i>
+                            </span>
+                            <span class="title">VIII. Web Search</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('web_search.web_duplicates') }}">Duplicate
+                                    Detection</a>
+                            </li>
+                            <li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('web_search.web_spam') }}">Spam Detection</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('distributed.mapreduce') }}">Distributed
+                                    Indexing</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Specialized IR -->
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="ti-pulse"></i>
+                            </span>
+                            <span class="title">IX. Specialized IR</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('clir.search') }}">Cross-Lingual Search</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('ethics.bias_analysis') }}">Bias Detection</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- NLP Tools -->
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="ti-files"></i>
+                            </span>
+                            <span class="title">NLP Tools</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('nlp.lm_generate') }}">Language Model</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('nlp.tokenization_demo') }}">Tokenization</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('nlp.synonyms_finder') }}">Synonyms</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('nlp.similarity_compare') }}">Similarity</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('nlp.readability_score') }}">Readability
+                                    Score</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Utilities -->
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="ti-settings"></i>
+                            </span>
+                            <span class="title">Utilities</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="{{ url_for('nlp.numbers_converter') }}">Nepali Numbers</a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link"
+                                    href="{{ url_for('nlp.romanization_converter') }}">Romanization</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="page-container">
+            <!-- Header -->
+            <div class="header navbar">
+                <div class="header-container">
+                    <ul class="nav-left">
+                        <li>
+                            <a id="sidebar-toggle" class="sidebar-toggle" href="javascript:void(0);">
+                                <i class="ti-menu"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav-right">
+                        <li>
+                            <span class="c-grey-700">Nepali Information Retrieval System</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="main-content bgc-grey-100">
+                <div id="mainContent">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="container-fluid">
+                        {% for message in messages %}
+                        <div class="alert alert-info">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom interactions -->
+    <script src="{{ url_for('static', filename='adminator/js/admin_interactions.js') }}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

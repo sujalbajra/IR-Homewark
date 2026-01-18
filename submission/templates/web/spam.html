@@ -1,0 +1,104 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Spam Detection - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">🚫 Spam Detection</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Identifies potential spam content based on content features.</p>
+                        <div class="peers ai-c jc-sb gap-20">
+                            <div class="peer">
+                                <span class="badge bgc-red-50 c-red-700">Keyword Stuffing</span>
+                            </div>
+                            <div class="peer">
+                                <span class="badge bgc-orange-50 c-orange-700">Link Density</span>
+                            </div>
+                            <div class="peer">
+                                <span class="badge bgc-blue-50 c-blue-700">Length Ratios</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Form -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔍 Content Analyzer</h4>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Page Content</label>
+                            <textarea name="content" class="form-control" rows="10"
+                                placeholder="Paste content to check for spam signals..."
+                                required>{{ content if content else '' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100 text-white">Analyze for Spam</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">📊 Risk Assessment</h4>
+
+                    {% if score is not none %}
+                    <div class="layer w-100">
+                        <div class="peers ai-c gap-20 mB-20">
+                            <div class="peer">
+                                <div class="c100 p{{ score }} {{ 'red' if score > 50 else 'green' }}">
+                                    <span>{{ score }}%</span>
+                                    <div class="slice">
+                                        <div class="bar"></div>
+                                        <div class="fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="peer">
+                                <h5 class="c-grey-900 mB-5">Probability Score</h5>
+                                <p class="mB-0 fw-bold {{ 'c-red-500' if score > 50 else 'c-green-500' }}">
+                                    {{ "High Risk" if score > 70 else ("Suspicious" if score > 30 else "Likely Clean")
+                                    }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {% if reasons %}
+                        <div class="bd p-15 bgc-red-50 bdrs-4">
+                            <h6 class="c-red-900 mB-10">⚠️ Detection Flags:</h6>
+                            <ul class="mB-0 c-red-700 pl-3">
+                                {% for reason in reasons %}
+                                <li>{{ reason }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% else %}
+                        <div class="bd p-15 bgc-green-50 bdrs-4">
+                            <div class="d-flex align-items-center">
+                                <i class="ti-check-box c-green-500 fsz-xl mR-10"></i>
+                                <span class="c-green-700 fw-500">No obvious spam signals detected.</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        Enter content to run analysis
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
