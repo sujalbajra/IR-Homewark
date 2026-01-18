@@ -1,0 +1,130 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Language Model - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📊 N-gram Language Model</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Predicts next word based on previous N-1 words.</p>
+                        <div class="row gap-20">
+                            <div class="col-md-6">
+                                <div class="bgc-blue-50 p-15 bdrs-4">
+                                    <h6 class="c-blue-700">Bigram (N=2)</h6>
+                                    <small>P(word | previous_word)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bgc-purple-50 p-15 bdrs-4">
+                                    <h6 class="c-purple-700">Trigram (N=3)</h6>
+                                    <small>P(word | previous_2_words)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generation Control -->
+            <div class="col-md-5">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🎲 Generator</h4>
+
+                    <div class="bgc-grey-100 p-15 bdrs-4 mB-20">
+                        <strong class="d-b mB-10 fsz-sm">Quick Seeds:</strong>
+                        <div class="gap-10 d-flex flex-wrap">
+                            <button type="button" onclick="document.querySelector('input[name=seed]').value='नेपाल'"
+                                class="btn btn-outline-primary btn-sm">नेपाल</button>
+                            <button type="button" onclick="document.querySelector('input[name=seed]').value='काठमाडौं'"
+                                class="btn btn-outline-primary btn-sm">काठमाडौं</button>
+                            <button type="button" onclick="document.querySelector('input[name=seed]').value='सरकार'"
+                                class="btn btn-outline-primary btn-sm">सरकार</button>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Seed Text</label>
+                            <input type="text" name="seed" class="form-control" placeholder="e.g., नेपाल"
+                                value="{{ seed if seed else '' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-500">N-gram Order</label>
+                            <select name="n" class="form-control">
+                                <option value="2" {{ 'selected' if n==2 else '' }}>Bigram (N=2)</option>
+                                <option value="3" {{ 'selected' if n==3 else '' }}>Trigram (N=3)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Max Words</label>
+                            <input type="number" name="max_words" class="form-control" min="5" max="30"
+                                value="{{ max_words if max_words else 15 }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Generate Text</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-7">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">📝 Output</h4>
+
+                    {% if generated %}
+                    <div class="layer w-100 mB-20">
+                        <div class="p-20 bdrs-4 bgc-grey-50 bd">
+                            <p class="m-0 fsz-md lh-1-5 c-grey-800">{{ generated }}</p>
+                        </div>
+                    </div>
+
+                    {% if predictions %}
+                    <h5 class="c-grey-900 mB-10">Usage Prediction</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Token</th>
+                                    <th>Prob</th>
+                                    <th>Meta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for word, prob in predictions[:5] %}
+                                <tr>
+                                    <td class="fw-bold">{{ word }}</td>
+                                    <td>{{ "%.4f"|format(prob) }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 4px; width: 50px;">
+                                            <div class="progress-bar bgc-blue-500" role="progressbar"
+                                                style="width: {{ prob * 100 }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    <div class="mT-20 fsz-sm c-grey-600">
+                        Vocab: {{ stats.vocab_size }} | Contexts: {{ stats.unique_contexts }}
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        Generate text to see results
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

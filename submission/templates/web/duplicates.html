@@ -1,0 +1,89 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Duplicate Detection - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">👥 Duplicate Detection</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Detects near-duplicates using <strong>SimHash</strong> fingerprinting.</p>
+                        <ul class="mB-0">
+                            <li><strong>Fingerprinting:</strong> Converts document content into a 64-bit hash.</li>
+                            <li><strong>Hamming Distance:</strong> Measures bit differences between two hashes.</li>
+                            <li><strong>Threshold:</strong> Distance < 3 usually indicates near-duplicates.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Form -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">📝 Compare Documents</h4>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Document A</label>
+                            <textarea name="text_a" class="form-control" rows="6"
+                                required>{{ text_a if text_a else 'नेपाल एक सुन्दर देश हो।' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Document B</label>
+                            <textarea name="text_b" class="form-control" rows="6"
+                                required>{{ text_b if text_b else 'नेपाल एक अति सुन्दर देश हो।' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Compare Fingerprints</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">📊 Analysis Results</h4>
+
+                    {% if results %}
+                    <div class="layer w-100">
+                        <div class="p-20 bdrs-4 mB-20 {{ 'bgc-green-50' if results.distance < 5 else 'bgc-red-50' }}">
+                            <h2 class="c-grey-900 mB-5 tac">Hamming Distance: {{ results.distance }}</h2>
+                            <p class="tac mB-0 fw-600 {{ 'c-green-700' if results.distance < 5 else 'c-red-700' }}">
+                                {% if results.distance == 0 %}
+                                Identical Documents
+                                {% elif results.distance < 5 %} Near Duplicates (Very Similar) {% else %} Different
+                                    Documents {% endif %} </p>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold bgc-grey-50">SimHash A</td>
+                                        <td><code>{{ results.hash_a }}</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bgc-grey-50">SimHash B</td>
+                                        <td><code>{{ results.hash_b }}</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        Enter text to check for duplicates
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

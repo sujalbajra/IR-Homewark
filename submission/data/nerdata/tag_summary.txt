@@ -1,0 +1,43 @@
+NER TAG ANALYSIS SUMMARY
+================================================================================
+
+NERDATA.TXT TAGS:
+--------------------------------------------------------------------------------
+LOC
+O
+ORG
+PER
+
+
+TOTAL.CONLL TAGS:
+--------------------------------------------------------------------------------
+B-FEEDBACK
+B-GENERAL
+B-LOC
+B-MISC
+B-ORG
+B-PER
+B-PROFANITY
+B-VIOLENCE
+I-FEEDBACK
+I-GENERAL
+I-LOC
+I-MISC
+I-ORG
+I-PER
+I-PROFANITY
+I-VIOLENCE
+O
+
+
+STANDARDIZED TAGS:
+--------------------------------------------------------------------------------
+FEEDBACK: 0 from nerdata.txt, 1101 from total.conll
+GENERAL: 0 from nerdata.txt, 5745 from total.conll
+LOC: 3133 from nerdata.txt, 446 from total.conll
+MISC: 0 from nerdata.txt, 1226 from total.conll
+O: 84803 from nerdata.txt, 50546 from total.conll
+ORG: 5145 from nerdata.txt, 419 from total.conll
+PER: 5956 from nerdata.txt, 2885 from total.conll
+PROFANITY: 0 from nerdata.txt, 743 from total.conll
+VIOLENCE: 0 from nerdata.txt, 690 from total.conll

@@ -1,0 +1,69 @@
+{% extends "base_admin.html" %}
+
+{% block title %}PageRank Algorithm - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📘 PageRank Algorithm</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">PageRank measures the importance of web pages based on the link structure.
+                        </p>
+                        <ul class="mB-0">
+                            <li><strong>Link Voting:</strong> A link from Page A to Page B is a vote for B.</li>
+                            <li><strong>Authority:</strong> Votes from important pages count more.</li>
+                            <li><strong>Damping Factor:</strong> Models random surfer behavior (usually 0.85).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Section -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🕸️ Link Graph Visualization</h4>
+                    <p class="c-grey-600 mB-20">Visualizing how nodes (documents) are connected via references.</p>
+
+                    <div class="ta-c bd p-20 bgc-grey-50">
+                        {% if graph_img %}
+                        <img src="data:image/png;base64,{{ graph_img }}" alt="Graph" class="img-fluid bdrs-4"
+                            style="max-height: 500px;">
+                        {% else %}
+                        <div class="alert alert-info">No graph data available.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculation Section -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🧮 Calculate PageRank</h4>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label fw-500">Damping Factor (alpha)</label>
+                                <input type="number" name="alpha" class="form-control" step="0.05" min="0" max="1"
+                                    value="{{ alpha }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-500">Iterations</label>
+                                <input type="number" name="iterations" class="form-control" min="1" max="100"
+                                    value="{{ iterations }}">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Run Calculation</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endblock %}

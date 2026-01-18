@@ -1,0 +1,140 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Numbers Converter - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">🔢 Nepali Number Converter</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Converts English numbers to Nepali formats (Digits, Words, and Currency
+                            style).</p>
+                        <div class="bgc-grey-100 p-15 bdrs-4 fsz-sm">
+                            <strong>Note:</strong> Nepali/Indian numbering system uses commas differently (e.g.,
+                            1,00,000 for 1 Lakh).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Converter Form -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔄 Convert Number</h4>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Enter Number</label>
+                            <input type="number" name="number" class="form-control" placeholder="e.g., 12345"
+                                value="{{ number if number else '' }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Convert</button>
+                    </form>
+                </div>
+
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h5 class="c-grey-900 mB-15">💡 Examples</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered mB-0">
+                            <thead class="bgc-grey-50">
+                                <tr>
+                                    <th>Input</th>
+                                    <th>Nepali Output</th>
+                                    <th>Word</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>100</td>
+                                    <td>१००</td>
+                                    <td>सय</td>
+                                </tr>
+                                <tr>
+                                    <td>1000</td>
+                                    <td>१,०००</td>
+                                    <td>हजार</td>
+                                </tr>
+                                <tr>
+                                    <td>100000</td>
+                                    <td>१,००,०००</td>
+                                    <td>लाख</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">📝 Results</h4>
+
+                    {% if results.nepali_digits %}
+                    <div class="layer w-100">
+                        <!-- Digits -->
+                        <div class="bgc-blue-50 p-20 bdrs-4 mB-20 bd">
+                            <h6 class="c-grey-600 mB-10 text-uppercase fsz-xs fw-bold">Nepali Digits</h6>
+                            <p class="mB-0 fsz-xl fw-bold c-blue-800">{{ results.nepali_digits }}</p>
+                        </div>
+
+                        <!-- Words -->
+                        <div class="bgc-purple-50 p-20 bdrs-4 mB-20 bd">
+                            <h6 class="c-grey-600 mB-10 text-uppercase fsz-xs fw-bold">In Words</h6>
+                            <p class="mB-0 fsz-lg c-purple-800">{{ results.nepali_words }}</p>
+                        </div>
+
+                        <!-- Formatted -->
+                        <div class="bgc-orange-50 p-20 bdrs-4 bd">
+                            <h6 class="c-grey-600 mB-10 text-uppercase fsz-xs fw-bold">Currency Format</h6>
+                            <div class="peers ai-c gap-20">
+                                <div class="peer">
+                                    <small class="d-b c-grey-600">Nepali Style</small>
+                                    <span class="fsz-md fw-bold c-grey-800">{{ results.formatted_nepali }}</span>
+                                </div>
+                                <div class="peer">
+                                    <small class="d-b c-grey-600">English Style</small>
+                                    <span class="fsz-md fw-bold c-grey-800">{{ results.formatted_english }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Table -->
+                        <div class="mT-30">
+                            <h6 class="c-grey-900 mB-15">Summary Table</h6>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold bgc-grey-50" width="140">Original</td>
+                                        <td>{{ number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bgc-grey-50">Nepali Digits</td>
+                                        <td>{{ results.nepali_digits }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold bgc-grey-50">Nepali Words</td>
+                                        <td>{{ results.nepali_words }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        Enter a number to convert
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

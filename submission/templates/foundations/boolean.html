@@ -1,0 +1,112 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Boolean Search - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📘 Boolean Retrieval Model</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">The Boolean model is based on <strong>Set Theory</strong>. Documents are
+                            represented as sets of terms.</p>
+                        <ul class="mB-0">
+                            <li><strong>AND (INTERSECTION):</strong> Retrieves documents containing BOTH terms (A ∩ B).
+                                Increases precision.</li>
+                            <li><strong>OR (UNION):</strong> Retrieves documents containing EITHER term (A ∪ B).
+                                Increases recall.</li>
+                            <li><strong>NOT (DIFFERENCE):</strong> Excludes documents containing the term (A - B).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔍 Interactive Boolean Search</h4>
+
+                    <div class="bgc-grey-100 p-15 bdrs-4 mB-20">
+                        <strong class="d-b mB-10">Quick Examples (click to use):</strong>
+                        <div class="peers fxw-nw ai-c gap-10">
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='नेपाल सरकार'"
+                                class="peer btn btn-outline-primary btn-sm">नेपाल सरकार</button>
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='राजनीति खेल'"
+                                class="peer btn btn-outline-primary btn-sm">राजनीति खेल</button>
+                            <button type="button"
+                                onclick="document.querySelector('input[name=query]').value='प्रविधि विकास'"
+                                class="peer btn btn-outline-primary btn-sm">प्रविधि विकास</button>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label fw-500">Enter Query Terms</label>
+                                <input type="text" name="query" class="form-control"
+                                    placeholder="e.g., nepal government" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-500">Operation</label>
+                                <select name="operation" class="form-control">
+                                    <option value="AND">AND (All terms must exist)</option>
+                                    <option value="OR">OR (Any term can exist)</option>
+                                    <option value="NOT">NOT (Exclude subsequent terms)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            {% if results is not none %}
+            <div class="col-md-12">
+                <div class="bd bgc-white p-20">
+                    <h5 class="c-grey-900 mB-20">Results: <span class="c-blue-500">{{ results|length }}</span> Documents
+                        Found</h5>
+                    {% if results %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Document ID</th>
+                                    <th>Preview</th>
+                                    <th>Link</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in results %}
+                                <tr>
+                                    <td class="fw-bold">{{ doc }}</td>
+                                    <td>{{ doc_previews.get(doc, '')[:100] }}...</td>
+                                    <td>
+                                        <a href="{{ url_for('general.view_document', filename=doc) }}"
+                                            class="btn btn-sm btn-info text-white">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mB-0">No documents matched your query.</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

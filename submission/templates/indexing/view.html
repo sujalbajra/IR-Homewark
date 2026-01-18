@@ -1,0 +1,109 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Indexing Stats - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📚 Indexing & Compression</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Overview of the system's inverted index structure.</p>
+                        <div class="row gap-20">
+                            <div class="col-md-4">
+                                <div class="bgc-blue-50 p-15 bdrs-4">
+                                    <h6 class="c-blue-700">Inverted Index</h6>
+                                    <small>Maps terms → documents (Postings List)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bgc-green-50 p-15 bdrs-4">
+                                    <h6 class="c-green-700">Positional</h6>
+                                    <small>Stores term positions for phrase queries</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bgc-orange-50 p-15 bdrs-4">
+                                    <h6 class="c-orange-700">Compression</h6>
+                                    <small>Variable Byte (VB) coding to save space</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="col-md-12">
+                <div class="row gap-20">
+                    <!-- Doc Count -->
+                    <div class="col-md-4">
+                        <div class="layers bd bgc-white p-20">
+                            <div class="layer w-100 mB-10">
+                                <h6 class="lh-1">Total Documents</h6>
+                            </div>
+                            <div class="layer w-100">
+                                <div class="peers ai-sb fxw-nw">
+                                    <div class="peer peer-greed">
+                                        <span id="sparklinedash"></span>
+                                    </div>
+                                    <div class="peer">
+                                        <span class="d-ib lh-0 va-m fw-600 fsz-xl c-grey-900">{{ stats.doc_count
+                                            }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vocab Size -->
+                    <div class="col-md-4">
+                        <div class="layers bd bgc-white p-20">
+                            <div class="layer w-100 mB-10">
+                                <h6 class="lh-1">Vocabulary Size</h6>
+                            </div>
+                            <div class="layer w-100">
+                                <div class="peers ai-sb fxw-nw">
+                                    <div class="peer peer-greed">
+                                        <span id="sparklinedash2"></span>
+                                    </div>
+                                    <div class="peer">
+                                        <span class="d-ib lh-0 va-m fw-600 fsz-xl c-grey-900">{{ stats.vocab_size
+                                            }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Tokens -->
+                    <div class="col-md-4">
+                        <div class="layers bd bgc-white p-20">
+                            <div class="layer w-100 mB-10">
+                                <h6 class="lh-1">Total Tokens</h6>
+                            </div>
+                            <div class="layer w-100">
+                                <div class="peers ai-sb fxw-nw">
+                                    <div class="peer peer-greed">
+                                        <span id="sparklinedash3"></span>
+                                    </div>
+                                    <div class="peer">
+                                        <span class="d-ib lh-0 va-m fw-600 fsz-xl c-grey-900">{{ stats.total_tokens
+                                            }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Train Classifier{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Document Classifier (PyTorch)</h5>
+            </div>
+            <div class="card-body">
+                <form id="trainForm">
+                    <div class="form-group">
+                        <label>Training Epochs</label>
+                        <input type="number" class="form-control" name="epochs" value="10">
+                    </div>
+                    <p class="text-muted small">
+                        Model will automatically label documents based on filename suffix
+                        (e.g., <code>doc_politics.txt</code> → politics)
+                    </p>
+                    <button type="submit" class="btn btn-danger btn-block" id="trainBtn">
+                        <i class="fas fa-fire"></i> Train Neural Network
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0">Test Prediction</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <textarea class="form-control" id="testText" rows="3"
+                        placeholder="Enter text to classify..."></textarea>
+                </div>
+                <button class="btn btn-outline-dark btn-block" onclick="predict()">Predict Category</button>
+                <div id="predictionResult" class="mt-2 font-weight-bold text-center"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Training Metrics</h5>
+            </div>
+            <div class="card-body">
+                <div id="statusArea" class="text-center py-5">
+                    <p class="text-muted">Waiting to start...</p>
+                </div>
+                <div id="classesBadge" class="mb-3"></div>
+                <canvas id="lossChart" style="display:none; height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let lossChart = null;
+
+    document.getElementById('trainForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const btn = document.getElementById('trainBtn');
+        const status = document.getElementById('statusArea');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Training...';
+        status.innerHTML = '<div class="spinner-border text-danger"></div><p>Training Neural Network...</p>';
+
+        const formData = new FormData(this);
+
+        fetch("{{ url_for('ml.train_classifier') }}", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-fire"></i> Train Neural Network';
+
+                if (data.status === 'error') {
+                    status.innerHTML = `<div class="alert alert-warning">${data.message}</div>`;
+                    return;
+                }
+
+                status.style.display = 'none';
+
+                // Show Classes
+                const badgeHtml = data.classes.map(c => `<span class="badge badge-secondary mr-1">${c}</span>`).join('');
+                document.getElementById('classesBadge').innerHTML = `<h6>Detected Classes:</h6>${badgeHtml}`;
+
+                // Render Chart
+                renderChart(data.history);
+            });
+    });
+
+    function renderChart(history) {
+        const ctx = document.getElementById('lossChart').getContext('2d');
+        document.getElementById('lossChart').style.display = 'block';
+
+        if (lossChart) lossChart.destroy();
+
+        lossChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: history.map((_, i) => `Epoch ${i + 1}`),
+                datasets: [{
+                    label: 'Training Loss',
+                    data: history,
+                    borderColor: '#dc3545',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+    }
+
+    function predict() {
+        const text = document.getElementById('testText').value;
+        const formData = new FormData();
+        formData.append('text', text);
+
+        fetch("{{ url_for('ml.predict_classifier') }}", {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                const div = document.getElementById('predictionResult');
+                if (data.status === 'error') {
+                    div.className = 'text-danger';
+                    div.innerText = data.message;
+                } else {
+                    div.className = 'text-success h4';
+                    div.innerText = data.category.toUpperCase();
+                }
+            });
+    }
+</script>
+{% endblock %}

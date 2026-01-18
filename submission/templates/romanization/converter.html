@@ -1,0 +1,122 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Romanization Converter - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">🔤 Romanization Converter</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Convert text between Nepali (Devanagari) and Romanized English.</p>
+                        <ul class="mB-0">
+                            <li><strong>To Nepali:</strong> Converts "nepal" → "नेपाल"</li>
+                            <li><strong>To Roman:</strong> Converts "नेपाल" → "nepal"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Converter Form -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔄 Convert Text</h4>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Input Text</label>
+                            <textarea name="text" class="form-control" rows="5" placeholder="Enter text here..."
+                                required>{{ text if text else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-500 d-block mB-10">Conversion Direction</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="direction" id="to_nepali"
+                                    value="to_nepali" {{ 'checked' if direction !='to_roman' else '' }}>
+                                <label class="form-check-label" for="to_nepali">Roman to Nepali</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="direction" id="to_roman"
+                                    value="to_roman" {{ 'checked' if direction=='to_roman' else '' }}>
+                                <label class="form-check-label" for="to_roman">Nepali to Roman</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Convert</button>
+                    </form>
+                </div>
+
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h5 class="c-grey-900 mB-15">💡 Examples</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered mB-0">
+                            <thead class="bgc-grey-50">
+                                <tr>
+                                    <th>Input</th>
+                                    <th>Output</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>nepal</td>
+                                    <td>नेपाल</td>
+                                    <td>Standard</td>
+                                </tr>
+                                <tr>
+                                    <td>kaThamaDau</td>
+                                    <td>काठमाडौं</td>
+                                    <td>T/D = ट/ड</td>
+                                </tr>
+                                <tr>
+                                    <td>bhaalu</td>
+                                    <td>भालु</td>
+                                    <td>bh = भ</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">📝 Output</h4>
+
+                    {% if result %}
+                    <div class="layer w-100">
+                        <div class="bgc-blue-50 p-20 bdrs-4 mB-20 bd">
+                            <h6 class="c-grey-600 mB-10 text-uppercase fsz-xs fw-bold">Converted Text</h6>
+                            <p class="mB-0 fsz-lg fw-bold c-grey-800">{{ result }}</p>
+                        </div>
+
+                        <div class="bgc-grey-50 p-15 bdrs-4 bd">
+                            <h6 class="c-grey-600 mB-5 text-uppercase fsz-xs fw-bold">Original Input</h6>
+                            <p class="mB-0 c-grey-700">{{ text }}</p>
+                        </div>
+
+                        {% if direction != 'to_roman' %}
+                        <div class="alert alert-info mT-20 mB-0">
+                            <strong>Tip:</strong> Use capital letters for retroflex sounds (T=ट, D=ड, N=ण).
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        Enter text to convert
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

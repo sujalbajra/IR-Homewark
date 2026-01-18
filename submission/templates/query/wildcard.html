@@ -1,0 +1,83 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Wildcard Queries - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📘 Wildcard Search</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Wildcards allow you to search for variations of a word using the
+                            <code>*</code> character.</p>
+                        <ul class="mB-0">
+                            <li><strong>Trailing Wildcard (kth*):</strong> Matches terms starting with 'kth' (e.g.,
+                                kathamandu, katha).</li>
+                            <li><strong>Leading Wildcard (*mandu):</strong> Matches terms ending with 'mandu' (e.g.,
+                                kathmandu).</li>
+                            <li><strong>Middle Wildcard (k*mandu):</strong> Matches terms with 'k' start and 'mandu'
+                                end.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="col-md-12">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔍 Interactive Wildcard Search</h4>
+
+                    <div class="bgc-grey-100 p-15 bdrs-4 mB-20">
+                        <strong class="d-b mB-10">Quick Examples:</strong>
+                        <div class="peers fxw-nw ai-c gap-10">
+                            <button type="button" onclick="document.querySelector('input[name=query]').value='नेपा*'"
+                                class="peer btn btn-outline-primary btn-sm">नेपा*</button>
+                            <button type="button" onclick="document.querySelector('input[name=query]').value='*कार'"
+                                class="peer btn btn-outline-primary btn-sm">*कार</button>
+                            <button type="button" onclick="document.querySelector('input[name=query]').value='स*ल'"
+                                class="peer btn btn-outline-primary btn-sm">स*ल</button>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <label class="form-label fw-500">Enter Query with *</label>
+                                <input type="text" name="query" class="form-control" placeholder="e.g., nepal*"
+                                    required>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Find Matches</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            {% if matches is not none %}
+            <div class="col-md-12">
+                <div class="bd bgc-white p-20">
+                    <h5 class="c-grey-900 mB-20">Terms Matching "<span class="c-blue-500">{{ query }}</span>"</h5>
+                    {% if matches %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for term in matches %}
+                        <span class="badge bg-light text-dark border p-2">{{ term }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mB-0">No terms matched your wildcard query.</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

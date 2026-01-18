@@ -1,0 +1,142 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Sentence Similarity - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">📏 Similarity Measures</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Comparing text similarity using different metrics.</p>
+                        <div class="row gap-20">
+                            <div class="col-md-4">
+                                <div class="bgc-blue-50 p-15 bdrs-4">
+                                    <h6 class="c-blue-700">Jaccard (Overlap)</h6>
+                                    <small>Intersection / Union of tokens</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bgc-green-50 p-15 bdrs-4">
+                                    <h6 class="c-green-700">Cosine (Semantic)</h6>
+                                    <small>Angle between vector embeddings</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="bgc-orange-50 p-15 bdrs-4">
+                                    <h6 class="c-orange-700">Edit Distance</h6>
+                                    <small>Operations to transform string</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Form -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <div class="peers ai-c jc-sb gap-20 mB-20">
+                        <div class="peer">
+                            <h4 class="c-grey-900 mB-0">⚖️ Compare Sentences</h4>
+                        </div>
+                    </div>
+
+                    <div class="bgc-grey-100 p-15 bdrs-4 mB-20">
+                        <strong class="d-b mB-10">Quick Examples:</strong>
+                        <div class="peers fxw-nw ai-c gap-10">
+                            <button type="button"
+                                onclick="document.querySelector('textarea[name=sent1]').value='नेपाल एक सुन्दर देश हो'; document.querySelector('textarea[name=sent2]').value='नेपाल धेरै राम्रो देश हो';"
+                                class="peer btn btn-outline-primary btn-sm">Similar</button>
+                            <button type="button"
+                                onclick="document.querySelector('textarea[name=sent1]').value='विद्यार्थीहरूले राम्रो पढ्नुपर्छ'; document.querySelector('textarea[name=sent2]').value='खेलाडीहरूले कडा अभ्यास गर्छन्';"
+                                class="peer btn btn-outline-warning btn-sm">Different</button>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Sentence 1</label>
+                            <textarea name="sent1" class="form-control" rows="3" placeholder="Enter first sentence..."
+                                required>{{ sent1 if sent1 else '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Sentence 2</label>
+                            <textarea name="sent2" class="form-control" rows="3" placeholder="Enter second sentence..."
+                                required>{{ sent2 if sent2 else '' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Compare Similarity</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">📊 Analysis Results</h4>
+
+                    {% if scores %}
+                    <div class="layer w-100">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Score</th>
+                                    <th>Verdict</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Jaccard</strong></td>
+                                    <td>{{ "%.4f"|format(scores.jaccard) }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 6px; width: 60px;">
+                                            <div class="progress-bar bgc-blue-500" role="progressbar"
+                                                style="width: {{ (scores.jaccard * 100)|int }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cosine</strong></td>
+                                    <td>{{ "%.4f"|format(scores.cosine) }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 6px; width: 60px;">
+                                            <div class="progress-bar bgc-green-500" role="progressbar"
+                                                style="width: {{ (scores.cosine * 100)|int }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Edit Sim</strong></td>
+                                    <td>{{ "%.4f"|format(scores.edit_similarity) }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 6px; width: 60px;">
+                                            <div class="progress-bar bgc-orange-500" role="progressbar"
+                                                style="width: {{ (scores.edit_similarity * 100)|int }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="alert alert-info mB-0">
+                            <strong>Edit Distance:</strong> {{ scores.edit_distance }} operations
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        Enter sentences to compare
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

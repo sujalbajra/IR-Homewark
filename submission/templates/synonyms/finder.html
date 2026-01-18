@@ -1,0 +1,91 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Synonym Finder - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="row gap-20">
+            <!-- Theory Section -->
+            <div class="col-md-12">
+                <div class="layers bd bgc-white p-20">
+                    <div class="layer w-100 mB-10">
+                        <h4 class="lh-1 c-grey-900">🔍 Synonym Finder</h4>
+                    </div>
+                    <div class="layer w-100">
+                        <p class="c-grey-900">Finds semantically similar words using **Word Embeddings** and Cosine
+                            Similarity.</p>
+                        <div class="bgc-grey-100 p-15 bdrs-4 fsz-sm">
+                            <code>similarity = (vec1 · vec2) / (||vec1|| × ||vec2||)</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                    <h4 class="c-grey-900 mB-20">🔤 Find Synonyms</h4>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-500">Enter Word</label>
+                            <input type="text" name="word" class="form-control" placeholder="e.g., राम्रो"
+                                value="{{ word if word else '' }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Find Similar Words</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="col-md-6">
+                <div class="bgc-white bd bdrs-3 p-20 mB-20 h-100">
+                    <h4 class="c-grey-900 mB-20">📋 Results</h4>
+
+                    {% if synonyms %}
+                    <div class="layer w-100">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Word</th>
+                                        <th>Similarity</th>
+                                        <th>Conf</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for syn_word, score in synonyms %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td class="fw-bold">{{ syn_word }}</td>
+                                        <td>{{ "%.4f"|format(score) }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 4px; width: 50px;">
+                                                <div class="progress-bar bgc-green-500" role="progressbar"
+                                                    style="width: {{ (score * 100)|int }}%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% elif word %}
+                    <div class="alert alert-warning mB-0">
+                        Word "<strong>{{ word }}</strong>" not found in vocabulary.
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        Enter a word to find synonyms
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

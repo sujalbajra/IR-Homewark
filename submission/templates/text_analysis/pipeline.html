@@ -1,0 +1,106 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Text Analysis Pipeline - Nepali IR{% endblock %}
+
+{% block content %}
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+        <div class="bgc-white p-20 bd">
+            <h6 class="c-grey-900">Input Text</h6>
+            <div class="mT-30">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Enter Nepali Text</label>
+                        <textarea name="text" class="form-control" rows="5" placeholder="यहाँ नेपाली पाठ लेख्नुहोस्..."
+                            required>{{ input_text if input_text else '' }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Process Text</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if results %}
+<div class="card">
+    <h3>Processing Results</h3>
+
+    <div class="pipeline-step">
+        <h4>1. Tokenization ({{ results.tokens|length }} tokens)</h4>
+        <div class="token-box">
+            {% for token in results.tokens %}
+            <span class="token raw">{{ token }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="pipeline-step">
+        <h4>2. Stopword Removal ({{ results.removed_stopwords|length }} removed)</h4>
+        <div class="token-box">
+            {% for token in results.tokens %}
+            {% if token in results.filtered %}
+            <span class="token keep">{{ token }}</span>
+            {% else %}
+            <span class="token removed" title="Removed Stopword">{{ token }}</span>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="pipeline-step">
+        <h4>3. Stemming (Root Forms)</h4>
+        <div class="token-box">
+            {% for stem in results.stemmed %}
+            <span class="token stem">{{ stem }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .token-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        line-height: 2.5;
+    }
+
+    .token {
+        display: inline-block;
+        padding: 2px 8px;
+        margin: 2px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        border: 1px solid #ddd;
+        background: white;
+    }
+
+    .token.raw {
+        border-color: #ced4da;
+    }
+
+    .token.keep {
+        border-color: #28a745;
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .token.removed {
+        border-color: #dc3545;
+        background: #f8d7da;
+        color: #721c24;
+        text-decoration: line-through;
+        opacity: 0.6;
+    }
+
+    .token.stem {
+        border-color: var(--primary-color);
+        background: #cce5ff;
+        color: #004085;
+        font-weight: bold;
+    }
+</style>
+{% endif %}
+{% endblock %}

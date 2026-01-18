@@ -1,0 +1,197 @@
+{% extends "base_admin.html" %}
+
+{% block title %}View Document: {{ filename }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Document Content Area -->
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-file-alt mr-2"></i>{{ filename }}
+                    </h5>
+                </div>
+                <div>
+                    <div class="btn-group btn-group-sm">
+                        {% if prev_file %}
+                        <a href="{{ url_for('general.view_document', filename=prev_file) }}"
+                            class="btn btn-outline-secondary" title="Previous Document">
+                            <i class="fas fa-chevron-left"></i> Prev
+                        </a>
+                        {% else %}
+                        <button class="btn btn-outline-secondary disabled"><i class="fas fa-chevron-left"></i>
+                            Prev</button>
+                        {% endif %}
+
+                        <a href="{{ url_for('general.documents') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-list"></i> List
+                        </a>
+
+                        {% if next_file %}
+                        <a href="{{ url_for('general.view_document', filename=next_file) }}"
+                            class="btn btn-outline-secondary" title="Next Document">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% else %}
+                        <button class="btn btn-outline-secondary disabled">Next <i
+                                class="fas fa-chevron-right"></i></button>
+                        {% endif %}
+                    </div>
+
+                    <button class="btn btn-sm btn-outline-danger ml-2" data-toggle="modal" data-target="#deleteModal">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="document-content p-4 border rounded bg-white"
+                    style="font-size: 1.15em; line-height: 1.8; white-space: pre-wrap; font-family: 'Georgia', serif;"
+                    id="docContent">
+                    {{ annotated_content | safe }}
+                </div>
+
+                <!-- Content Pagination -->
+                {% if total_pages > 1 %}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <a href="{{ url_for('general.view_document', filename=filename, p=current_page-1) }}"
+                        class="btn btn-sm btn-outline-secondary {% if current_page <= 1 %}disabled{% endif %}">
+                        <i class="fas fa-arrow-up"></i> Previous Page
+                    </a>
+
+                    <span class="text-muted font-weight-bold">Page {{ current_page }} of {{ total_pages }}</span>
+
+                    <a href="{{ url_for('general.view_document', filename=filename, p=current_page+1) }}"
+                        class="btn btn-sm btn-outline-secondary {% if current_page >= total_pages %}disabled{% endif %}">
+                        Next Page <i class="fas fa-arrow-down"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-md-4">
+        <div class="sticky-top" style="top: 20px; z-index: 100;">
+            <div class="card shadow-sm border-info">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-microscope"></i> Word Analysis</h6>
+                </div>
+                <div class="card-body" id="analysisPanel">
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-mouse-pointer fa-2x mb-2"></i>
+                        <p>Select any word in the document to analyze it.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 text-center">
+                <a href="{{ url_for('general.documents') }}" class="btn btn-secondary btn-block">
+                    <i class="fas fa-arrow-left"></i> Back to Documents
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<style>
+    ::selection {
+        background: #fff2a8;
+        /* Yellow highlight for selection */
+    }
+
+    .analyzed-word {
+        border-bottom: 2px solid #007bff;
+        background-color: #e6f2ff;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const docContent = document.getElementById('docContent');
+        const analysisPanel = document.getElementById('analysisPanel');
+
+        document.addEventListener('mouseup', function (e) {
+            const selection = window.getSelection();
+            const text = selection.toString().trim();
+
+            // Only process if selection is within document content and is valid text
+            if (text.length > 0 && docContent.contains(selection.anchorNode)) {
+                analyzeWord(text);
+            }
+        });
+
+        function analyzeWord(word) {
+            analysisPanel.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Analyzing...</p></div>';
+
+            fetch(`{{ url_for('general.analyze_word') }}?word=${encodeURIComponent(word)}&doc_id={{ filename }}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayAnalysis(data);
+                })
+                .catch(err => {
+                    analysisPanel.innerHTML = '<div class="alert alert-danger">Analysis failed</div>';
+                });
+        }
+
+        function displayAnalysis(data) {
+            const html = `
+                <h4 class="text-primary text-center mb-3">${data.original}</h4>
+                <div class="table-responsive">
+                    <table class="table table-sm table-borderless">
+                        <tr>
+                            <td class="text-muted">Stem:</td>
+                            <td class="font-weight-bold">${data.stem}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Stopword:</td>
+                            <td>
+                                ${data.is_stopword ?
+                    '<span class="badge badge-danger">Yes</span>' :
+                    '<span class="badge badge-success">No</span>'}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Entity:</td>
+                            <td>
+                                ${data.entity_type ?
+                    `<span class="badge badge-warning">${data.entity_type}</span>` :
+                    '<span class="text-muted">-</span>'}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">POS:</td>
+                            <td><span class="badge badge-secondary">${data.pos_tag || '-'}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">TF-IDF:</td>
+                            <td class="font-weight-bold">${data.tf_idf}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">IDF:</td>
+                            <td>${data.idf}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Doc Freq:</td>
+                            <td>${data.doc_freq} / ${data.total_docs}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                ${!data.is_stopword ? `
+                <hr>
+                <h6><i class="fas fa-project-diagram text-info"></i> Linguistic Stats</h6>
+                <div class="progress mb-2" style="height: 5px;">
+                    <div class="progress-bar" role="progressbar" style="width: ${Math.min(data.doc_freq / data.total_docs * 100, 100)}%"></div>
+                </div>
+                <small class="text-muted">Commonness in corpus</small>
+                ` : ''}
+            `;
+            analysisPanel.innerHTML = html;
+        }
+    });
+</script>
+{% endblock %}
